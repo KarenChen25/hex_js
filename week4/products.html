@@ -1,0 +1,95 @@
+<link
+    rel="stylesheet"
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+    integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+    crossorigin="anonymous"
+/>
+
+<div id="app">
+    <!--  create btn  -->
+    <div class="text-right mt-4">
+        <button type="button" @click="openPanel('new')" class="btn btn-primary">建立新產品</button>
+
+        <!--   create    -->
+        <div class="modal fade" id="editPanel" tabindex="-1" role="dialog" aria-hidden="true">
+            <modal :api="api" :is-new="isNew" :edit-product="editProduct" @update="getProducts"></modal>
+        </div>
+
+        <!--   delete panel    -->
+        <div class="modal fade" id="delePanel" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title" id="confirmModalLabel">刪除產品</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">是否刪除<span class="font-weight-bold text-danger">{{editProduct.title}}</span>產品</div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-primary btn-sm" @click="deleteOrNot(false)">取消</button>
+                        <button type="button" class="btn btn-outline-danger btn-sm" @click="deleteOrNot(true)">確認</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--  List     -->
+    </div>
+    <table class="table mt-4">
+        <thead>
+            <tr>
+                <th width="120">分類</th>
+                <th>產品名稱</th>
+                <th width="120">原價</th>
+                <th width="120">售價</th>
+                <th width="120">是否啟用</th>
+                <th width="150">編輯</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="(item,i) in products" :key="item.id">
+                <td>{{item.category}}</td>
+                <td>{{item.title}}</td>
+                <td>{{item.origin_price}}</td>
+                <td>{{item.price}}</td>
+                <td>
+                    <span v-if="item.enabled" class="text-info">啟用</span>
+                    <span v-else>未啟用</span>
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <button
+                            class="btn btn-outline-primary btn-sm"
+                            type="button"
+                            @click="openPanel('edit',i,item)"
+                            :disabled="loadingBtn === item.id"
+                        >
+                            <div class="spinner-border spinner-border-sm" role="status" v-if="loadingBtn === item.id"></div>
+                            編輯
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm" type="button" @click="openPanel('delete',i,item)">刪除</button>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <pagination :pages="pagination" @emit-pages="getProducts"></pagination>
+    <!-- create modal -->
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script
+    src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+    integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+    crossorigin="anonymous"
+></script>
+<script
+    src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+    crossorigin="anonymous"
+></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="./js/src.js" type="module"></script>
+<script src="./js/pagination.js"></script>
+<script src="./js/modal.js"></script>

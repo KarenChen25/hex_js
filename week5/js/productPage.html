@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <link
+            rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+            integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+            crossorigin="anonymous"
+        />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css" />
+        <link href="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3/dist/vue-loading.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div id="app">
+            <validation-observer v-slot="{ invalid }">
+                <form @submit.prevent="submitForm">
+                    <div class="form-group">
+                        <validation-provider rules="required" v-slot="{ errors, classes }">
+                            <label for="username">收件人姓名</label>
+                            <input id="username" v-model="form.name" type="text" class="form-control" :class="classes" />
+                            <span class="invalid text-danger">{{ errors[0] }}</span>
+                        </validation-provider>
+                    </div>
+
+                    <div class="form-group">
+                        <validation-provider rules="required|email" v-slot="{ errors, classes }">
+                            <label for="email">Email</label>
+                            <input id="email" v-model="form.email" type="email" class="form-control" :class="classes" />
+                            <span class="invalid text-danger">{{ errors[0] }}</span>
+                        </validation-provider>
+                    </div>
+
+                    <div class="form-group">
+                        <validation-provider rules="required|min:8|numeric" v-slot="{ errors, classes }">
+                            <label for="tel">電話</label>
+                            <input id="tel" v-model="form.tel" type="tel" class="form-control" :class="classes" />
+                            <span class="invalid text-danger">{{ errors[0] }}</span>
+                        </validation-provider>
+                    </div>
+                    <div class="form-group">
+                        <validation-provider rules="required" v-slot="{ errors, classes }">
+                            <label for="address">地址</label>
+                            <input id="address" v-model="form.address" type="text" class="form-control" :class="classes" />
+                        </validation-provider>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">購買方式</label>
+                        <select v-model="form.payment" class="form-control" required>
+                            <option value="" disabled>
+                                請選擇付款方式
+                            </option>
+                            <option value="WebATM">
+                                WebATM
+                            </option>
+                            <option value="ATM">
+                                ATM
+                            </option>
+                            <option value="CVS">
+                                CVS
+                            </option>
+                            <option value="Barcode">
+                                Barcode
+                            </option>
+                            <option value="Credit">
+                                Credit
+                            </option>
+                            <option value="ApplePay">
+                                ApplePay
+                            </option>
+                            <option value="GooglePay">
+                                GooglePay
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">留言</label>
+                        <textarea id="message" v-model="form.message" class="form-control" cols="30" rows="3"> </textarea>
+                    </div>
+                    <div class="text-right"></div>
+
+                    <button type="submit" class="btn btn-primary" :disabled="invalid">送出表單</button>
+                </form>
+            </validation-observer>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.9/dist/vue.js"></script>
+        <script
+            src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+            integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+            crossorigin="anonymous"
+        ></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/vee-validate/3.3.0/vee-validate.full.min.js"></script>
+        <script type="module" src="main.js"></script>
+    </body>
+</html>
