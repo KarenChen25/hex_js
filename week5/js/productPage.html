@@ -16,14 +16,11 @@
     <body>
         <div id="app">
             <!-- loading 套件 start -->
-            <loading :active.sync="isLoading"></loading>
+            <!-- <loading :active.sync="isLoading"></loading> -->
             <!-- loading 套件 end -->
             <!-- 產品列表區 -->
             <!-- 產品列表 start -->
 
-            <div class="modal fade" id="editPanel" tabindex="-1" role="dialog" aria-hidden="true">
-                <modal :api="api" @update="getProducts"></modal>
-            </div>
             <div class="row mt-4">
                 <div v-for="(item, index) in products" :key="item.id" class="col-md-4 mb-4">
                     <!-- <div class="col-md-4 mb-4"> -->
@@ -45,7 +42,10 @@
                                     {{item.price}}元
                                 </div>
                                 <div>
-                                    <del class="h6">原價{{item.origin_price}}元</del>
+                                    <del v-if="item.origin_price!==item.price" class="h6">
+                                        原價{{item.origin_price}}元
+                                    </del>
+                                    <del v-else class="h6"><br /></del>
                                     <div class="h5">
                                         現在只要{{item.price}}元
                                     </div>
@@ -86,7 +86,7 @@
                                 <div class="h4">
                                     {{productMore.price}}元
                                 </div>
-                                <del class="h6">原價{{productMore.originalprice}}元</del>
+                                <del class="h6">原價{{productMore.origin_price}}元</del>
                                 <div class="h4">
                                     現在只要{{productMore.price}}元
                                 </div>
@@ -106,7 +106,6 @@
                                 <strong>{{productMore.price}}</strong> 元
                             </div>
                             <button type="button" class="btn btn-primary">
-                                <!-- <i class="fas fa-spinner fa-spin"></i> -->
                                 加到購物車
                             </button>
                         </div>
