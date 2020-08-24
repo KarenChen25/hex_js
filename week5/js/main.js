@@ -33,7 +33,11 @@ new Vue({
             payment: '',
             message: '',
         }, // 自訂的資料名稱
-        productMore: {},
+        productMore: {
+            num: 0,
+        },
+        isLoading: false,
+        status: { loadingItem: '' },
         api: {
             token: '',
             path: 'https://course-ec-api.hexschool.io/api/',
@@ -71,12 +75,41 @@ new Vue({
                 });
         },
         getMore(id) {
+            this.status.loadingItem = id;
             const url = `${this.api.path}${this.api.uuid}/ec/product/${id}`;
             axios.get(url).then(response => {
                 this.productMore = response.data.data;
-
+                this.$set(this.productMore, 'num', 1);
                 $('#productModal').modal('show');
                 console.log('get productdetails complete');
+            });
+        },
+        addToCart(id, quantity = 1) {
+            console.log(id, quantity);
+            const url = `${this.api.path}${this.api.uuid}/ec/shopping`;
+            const cart = {
+                product: id,
+                quantity: quantity,
+            };
+            console.log(cart);
+            axios
+                .post(url, cart)
+                .then(response => {
+                    this.isLoading = true;
+                    console.log(response);
+                    $('#productModal').modal('hide');
+                })
+                .catch(error => {
+                    this.isLoading = false;
+                    console.log(error.response);
+                    $('#productModal').modal('hide');
+                });
+            // this.delAllCart();
+        },
+        delAllCart() {
+            const url = `${this.api.path}${this.api.uuid}/ec/shopping/all/product`;
+            axios.delete(url).then(response => {
+                alert('全部刪除');
             });
         },
     },
