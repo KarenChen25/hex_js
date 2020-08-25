@@ -63,7 +63,7 @@
                                 <!-- <i class="spinner-grow spinner-grow-sm" v-if="status.loadingItem === item.id"></i> -->
                                 查看更多
                             </button>
-                            <button type="button" class="btn btn-outline-danger btn-sm ml-auto" @click="addToCart(item.id)">
+                            <button type="button" class="btn btn-outline-danger btn-sm ml-auto" @click="addToCart(item.id, quantity = 1)">
                                 <!-- <i class="spinner-grow spinner-grow-sm" v-if="status.loadingItem === item.id"></i> -->
                                 加到購物車
                             </button>
@@ -122,9 +122,81 @@
             </div>
 
             <!-- 產品細節 end-->
+            <!-- 購物車頁面 start -->
+            <div class="my-5 row justify-content-center">
+                <div class="col-md-6">
+                    <div class="text-right mb-3" v-for="item in carts" :key="item.product.id+2">
+                        <button type="button" class="btn btn-outline-danger btn-sm" @click="delAllCart()" :disabled="item === 0">
+                            <i class="far fa-trash-alt"> 刪除所有品項</i>
+                        </button>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <th>刪除</th>
+                            <th>品名</th>
+                            <th width="150px">
+                                數量
+                            </th>
+                            <th>單位</th>
+                            <th>單價</th>
+                        </thead>
+                        <tbody>
+                            <tr v-for="item in carts" :key="item.product.id+1">
+                                <td class="align-middle">
+                                    <button type="button" class="btn btn-outline-danger btn-sm" @click="delCartItem(item.product.id)">
+                                        <i class="far fa-trash-alt"></i>
+                                    </button>
+                                </td>
+                                <td class="align-middle">{{item.product.title}}</td>
+                                <td class="align-middle">
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <button
+                                                class="btn btn-outline-primary"
+                                                type="button"
+                                                @click="item.quantity--;updateQuantity(item.product.id,item.quantity);"
+                                                :disabled="item.quantity === 1"
+                                            >
+                                                -
+                                            </button>
+                                        </div>
+                                        <input
+                                            id="inlineFormInputGroupUsername"
+                                            type="text"
+                                            class="form-control text-center"
+                                            v-model="item.quantity"
+                                            @change="updateQuantity(item.product.id,item.quantity)"
+                                        />
+                                        <div class="input-group-prepend">
+                                            <button
+                                                class="btn btn-outline-primary"
+                                                type="button"
+                                                @click="item.quantity++;updateQuantity(item.product.id,item.quantity);"
+                                            >
+                                                +
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="align-middle"></td>
+                                <td class="align-middle text-right"></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="4" class="text-right">
+                                    總計
+                                </td>
+                                <td class="text-right">{{cartTotal}}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <!-- 購物車頁面 end -->
             <!-- 表單驗證區 -->
             <validation-observer v-slot="{ invalid }">
-                <form @submit.prevent="submitForm">
+                <form @submit.prevent="createOrder">
                     <div class="form-group">
                         <validation-provider rules="required" v-slot="{ errors, classes }">
                             <label for="username">收件人姓名</label>
@@ -194,6 +266,27 @@
                     <button type="submit" class="btn btn-primary" :disabled="invalid">送出表單</button>
                 </form>
             </validation-observer>
+
+            <!-- 完成訂單 Modal start -->
+            <div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">完成訂單</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>恭喜你已完成訂單。</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">關閉</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 完成訂單 Modal end -->
         </div>
         <script
             src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
