@@ -41,21 +41,12 @@ new Vue({
         carts: [],
         cartTotal: 0,
         api: {
-            token: '',
             path: 'https://course-ec-api.hexschool.io/api/',
             uuid: '622aca82-f046-487a-a10e-aa00aabcc682',
         },
     },
     created() {
-        this.api.token = document.cookie.replace(/(?:(?:^|.*;\s*)karentoken\s*\=\s*([^;]*).*$)|^.*$/, '$1');
-        //預設帶入 token
-        axios.defaults.headers.common.Authorization = `Bearer ${this.api.token}`;
-
-        if (this.api.token == '') {
-            window.location = 'productPage.html';
-        } else {
-            this.getProducts(1);
-        }
+        this.getProducts();
         this.getCart();
     },
     methods: {
@@ -78,13 +69,16 @@ new Vue({
             this.status.loadingItem = id;
             const url = `${this.api.path}${this.api.uuid}/ec/product/${id}`;
             axios.get(url).then(response => {
+                    this.status.loadingItem = '';
                 this.productMore = response.data.data;
                 this.$set(this.productMore, 'num', 1);
                 $('#productModal').modal('show');
                 console.log('get productdetails complete');
+                this.status.loadingItem = '';
             });
         },
         addToCart(id, quantity = 1) {
+            this.status.loadingItem = id;
             console.log(id, quantity);
             const url = `${this.api.path}${this.api.uuid}/ec/shopping`;
             const cart = {
@@ -95,18 +89,17 @@ new Vue({
             axios
                 .post(url, cart)
                 .then(response => {
-                    this.isLoading = true;
+                    this.status.loadingItem = '';
                     console.log(response);
                     $('#productModal').modal('hide');
                     this.getCart();
                 })
                 .catch(error => {
-                    this.isLoading = false;
+                    this.status.loadingItem = '';
                     console.log(error.response);
                     $('#productModal').modal('hide');
                     this.getCart();
                 });
-            // this.delAllCart();
         },
         getCart() {
             const url = `${this.api.path}${this.api.uuid}/ec/shopping`;
@@ -122,8 +115,10 @@ new Vue({
         },
         updateTotal() {
             this.cartTotal = 0;
+            document.getElementById('delAll').disabled=true
             this.carts.forEach(item => {
                 this.cartTotal = item.product.price * item.quantity;
+                document.getElementById('delAll').disabled=false
             });
         },
         updateQuantity(id, quantity = 1) {
@@ -145,29 +140,24 @@ new Vue({
                     this.isLoading = false;
                     console.log(error.response);
                 });
-            // this.delAllCart();
         },
         delCartItem(id) {
             const url = `${this.api.path}${this.api.uuid}/ec/shopping/${id}`;
             axios.delete(url).then(response => {
                 alert('刪除單一產品');
                 this.getCart();
-                // this.updateTotal();
             });
         },
         delAllCart() {
             const url = `${this.api.path}${this.api.uuid}/ec/shopping/all/product`;
             axios.delete(url).then(response => {
-                console.log('全部刪除');
-                alert('全部刪除');
+                alert('已清空購物車');
                 this.getCart();
-                // this.updateTotal();
             });
         },
         createOrder() {
             this.isLoading = true;
             const url = `${this.api.path}${this.api.uuid}/ec/orders`;
-
             axios
                 .post(url, this.form)
                 .then(response => {

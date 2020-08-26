@@ -60,7 +60,7 @@
                                 @click="getMore(item.id)"
                                 :disabled="status.loadingItem === item.id"
                             >
-                                <!-- <i class="spinner-grow spinner-grow-sm" v-if="status.loadingItem === item.id"></i> -->
+                                <i class="spinner-grow spinner-grow-sm" v-if="status.loadingItem === item.id"></i>
                                 查看更多
                             </button>
                             <button type="button" class="btn btn-outline-danger btn-sm ml-auto" @click="addToCart(item.id, quantity = 1)">
@@ -114,6 +114,7 @@
                                 <strong>{{ productMore.num * productMore.price }}</strong> 元
                             </div>
                             <button type="button" class="btn btn-primary" @click="addToCart(productMore.id, productMore.num)">
+                                <i v-if="status.loadingItem === productMore.id" class="fas fa-spinner fa-spin"></i>
                                 加到購物車
                             </button>
                         </div>
@@ -125,8 +126,8 @@
             <!-- 購物車頁面 start -->
             <div class="my-5 row justify-content-center">
                 <div class="col-md-6">
-                    <div class="text-right mb-3" v-for="item in carts" :key="item.product.id+2">
-                        <button type="button" class="btn btn-outline-danger btn-sm" @click="delAllCart()" :disabled="item === 0">
+                    <div class="text-right mb-3">
+                        <button type="button" id="delAll" class="btn btn-outline-danger btn-sm" @click="delAllCart()">
                             <i class="far fa-trash-alt"> 刪除所有品項</i>
                         </button>
                     </div>
